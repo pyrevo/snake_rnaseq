@@ -1,6 +1,9 @@
 {
+    #"data": "/media/Data2/Xuqinfiles/Raw_data/Mut-Raw data",
+    #"data": "/media/Data2/Xuqinfiles/MV_analysis/Mut-Raw_data",
+    #"data": "/media/Data2/Xuqinfiles/MV_analysis/Null-Raw_data",
     "data": "/media/Data2/Xuqinfiles/MV_analysis/Wt-Raw_data",
-    "workdir": "/media/Data2/Xuqinfiles/MV_analysis/results/Wt",
+    #"workdir": "/media/Data2/Xuqinfiles/MV_analysis/results/Wt",
     "ref": "/media/Data2/Xuqinfiles/MV_analysis/ref/Homo_sapiens.GRCh38.dna.primary_assembly.fa",
     "gtf": "/media/Data2/Xuqinfiles/MV_analysis/ref/Homo_sapiens.GRCh38.102.gtf",
 }
