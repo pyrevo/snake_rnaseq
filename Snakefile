@@ -92,6 +92,7 @@ rule align_sort:
         #'mv results/SJ.out.tab {output.sj}'
         #'mv results/Log.out {output.log}'
 
+        
 rule featureCounts:
     input:
         bam = expand("{sample}.Aligned.sortedByCoord.markDup.out.bam", sample=SAMPLES),
