@@ -1,11 +1,11 @@
-###########################
-# module to be loaded
-#module load snakemake-5.28.0 
-#module load STAR-2.7.6a 
-#module load fastqc-0.11.9 
+##############################
+# Modules to be loaded
+#module load snakemake-5.28.0
+#module load STAR-2.7.6a
+#module load fastqc-0.11.9
 #module load picard-2.23.8
 #module load subread-2.0.1
-###########################
+##############################
 
 
 configfile:
