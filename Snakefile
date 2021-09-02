@@ -12,20 +12,18 @@ configfile:
     "config.json"
 
 workdir:
-   config['data']
+   config['workdir']
 
 SAMPLES, = glob_wildcards(config['data'] + "/{sample}_1.fq.gz")
-RESULTS = config['data'] + '/results'
+RESULTS = config['workdir'] + '/results'
 LOGS = RESULTS + '/logs'
 
 
 rule all:
     input:
         #idx = directory('index'),
-        bam1 = expand("{sample}.Aligned.sortedByCoord.out.bam", sample=SAMPLES),
-        bam2 = expand("{sample}.Aligned.sortedByCoord.markDup.out.bam", sample=SAMPLES),
-        fqc1 = expand(LOGS + '/{sample}.fastqc_before_md.log', sample=SAMPLES),
-        fqc2 = expand(LOGS + '/{sample}.fastqc_after_md.log', sample=SAMPLES),
+        bam = expand("{sample}.Aligned.sortedByCoord.out.bam", sample=SAMPLES),
+        fqc = expand(LOGS + '/{sample}.fastqc.log', sample=SAMPLES),
         fc1 = RESULTS + '/featureCounts_genes.txt',
         fc2 = RESULTS + '/featureCounts_transcripts.txt'
 
@@ -48,14 +46,14 @@ rule index:
         '--sjdbOverhang 100'
 
 
-rule fastqc_before:
+rule fastqc:
     input:
         R1 = config['data'] + "/{sample}_1.fq.gz",
         R2 = config['data'] + "/{sample}_2.fq.gz",
     output:
         out = directory(RESULTS + "/fastqc/before_md/{sample}")
     log:
-        LOGS + '/{sample}.fastqc_before_md.log'
+        LOGS + '/{sample}.fastqc.log'
     threads:
         48 # set the maximum number of available cores
     shell:
@@ -94,43 +92,6 @@ rule align_sort:
         #'mv results/SJ.out.tab {output.sj}'
         #'mv results/Log.out {output.log}'
 
-
-rule mark_duplicates:
-    input:
-        bam = rules.align_sort.output.bam,
-    output:
-        bam = '{sample}.Aligned.sortedByCoord.markDup.out.bam',
-        met = '{sample}.marked_dup_metrics.txt'
-    log:
-        LOGS + '/{sample}.markDup.log'
-    threads:
-        48 # set the maximum number of available cores
-    shell:
-        """
-        java -jar $PICARDHOME/picard.jar MarkDuplicates \
-        --REMOVE_DUPLICATES \
-        -I {input.bam} \
-        -O {output.bam} \
-        -M {output.met} >> {log} 2>&1
-        """
-
-
-rule fastqc_after:
-    input:
-        bam = rules.mark_duplicates.output.bam
-    output:
-        out = directory(RESULTS + "/fastqc/after_md/{sample}")
-    log:
-        LOGS + '/{sample}.fastqc_after_md.log'
-    threads:
-        48 # set the maximum number of available cores
-    shell:
-        """
-        mkdir {output.out}
-        fastqc {input.bam} -o {output.out} >> {log} 2>&1
-        """
-
-
 rule featureCounts:
     input:
         bam = expand("{sample}.Aligned.sortedByCoord.markDup.out.bam", sample=SAMPLES),
@@ -152,4 +113,3 @@ rule featureCounts:
         '-g transcript_id '
         '-o {output.res2} '
         '-T {threads} {input.bam} >> {log.log2} 2>&1'
-
