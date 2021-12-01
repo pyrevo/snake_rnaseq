@@ -1,0 +1,7 @@
+name	condition
+WT1.1	WT
+WT2.1	WT
+WT3.1	WT
+miR.218.2_KO1.1	KO
+miR.218.2_KO2.1	KO
+miR.218.2_KO3.1	KO

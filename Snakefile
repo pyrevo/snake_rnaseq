@@ -1,5 +1,5 @@
 ###########################
-# module to be loaded
+# modules to be loaded
 #module load snakemake-5.28.0 
 #module load STAR-2.7.6a 
 #module load fastqc-0.11.9 
@@ -14,8 +14,8 @@ configfile:
 workdir:
    config['workdir']
 
-SAMPLES, = glob_wildcards(config['data'] + "/{sample}_1.fq.gz")
-RESULTS = config['workdir'] + '/results'
+SAMPLES, = glob_wildcards(config['data'] + "/{sample}_f1.fq.gz")
+RESULTS = config['workdir'] + '/Results'
 LOGS = RESULTS + '/logs'
 
 
@@ -48,8 +48,8 @@ rule index:
 
 rule fastqc:
     input:
-        R1 = config['data'] + "/{sample}_1.fq.gz",
-        R2 = config['data'] + "/{sample}_2.fq.gz",
+        R1 = config['data'] + "/{sample}_f1.fq.gz",
+        R2 = config['data'] + "/{sample}_r2.fq.gz",
     output:
         out = directory(RESULTS + "/fastqc/before_md/{sample}")
     log:
@@ -65,8 +65,8 @@ rule fastqc:
 
 rule align_sort:
     input:
-        R1 = config['data'] + "/{sample}_1.fq.gz",
-        R2 = config['data'] + "/{sample}_2.fq.gz",
+        R1 = config['data'] + "/{sample}_f1.fq.gz",
+        R2 = config['data'] + "/{sample}_r2.fq.gz",
         idx = rules.index.output
         #idx = directory('index')
     output:
@@ -95,7 +95,7 @@ rule align_sort:
         
 rule featureCounts:
     input:
-        bam = expand("{sample}.Aligned.sortedByCoord.markDup.out.bam", sample=SAMPLES),
+        bam = expand("{sample}.Aligned.sortedByCoord.out.bam", sample=SAMPLES),
         gtf = config['gtf'] # provide your GTF file
     output:
         res1 = RESULTS + '/featureCounts_genes.txt',
@@ -103,7 +103,7 @@ rule featureCounts:
     log:
         log1 = LOGS + '/featureCounts_genes.log',
         log2 = LOGS + '/featureCounts_transcripts.log'
-    threads: 
+    threads:
         24
     shell:
         'featureCounts -a {input.gtf} '

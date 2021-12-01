@@ -1,0 +1,3 @@
+comp	cond1	cond2
+KO_vs_WT	KO	WT
+WT_vs_KO	WT	KO
